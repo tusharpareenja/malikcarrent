@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Car, Menu, Moon, Sun, X } from 'lucide-react';
+import { Car, Menu, X } from 'lucide-react';
 
 interface NavbarProps {
   darkMode: boolean;
