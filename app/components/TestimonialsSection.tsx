@@ -95,7 +95,7 @@ const TestimonialsSection: React.FC = () => {
       clearInterval(interval);
       observer.disconnect();
     };
-  }, [activeIndex]);
+  }, [nextTestimonial]);
 
   return (
     <section 
