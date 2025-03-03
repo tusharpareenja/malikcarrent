@@ -47,7 +47,8 @@ const HeroSection: React.FC = () => {
         <Image
           src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
           alt="Luxury car background"
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-tr from-black via-purple-900/40 to-gray-800"></div>
       </div>

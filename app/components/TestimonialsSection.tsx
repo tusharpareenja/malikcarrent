@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import Image from "next/image";
@@ -49,154 +50,67 @@ const testimonials: Testimonial[] = [
 
 const TestimonialsSection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
   const nextTestimonial = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setActiveIndex((prev) => (prev + 1) % testimonials.length);
-      setTimeout(() => setIsAnimating(false), 500);
-    }
+    setActiveIndex((prev) => (prev + 1) % testimonials.length);
   };
 
   const prevTestimonial = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-      setTimeout(() => setIsAnimating(false), 500);
-    }
+    setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
       nextTestimonial();
     }, 5000);
-    
-    // Add intersection observer for scroll animations
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-in');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
 
-    // Observe the section
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      clearInterval(interval);
-      observer.disconnect();
-    };
-  }, [nextTestimonial]);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <section 
-      id="testimonials" 
-      ref={sectionRef}
-      className="py-20 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-purple-900/30 transition-colors duration-300"
-    >
+    <section ref={sectionRef} className="py-20 bg-gray-100 dark:bg-gray-900">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12 animate-on-scroll opacity-0 transform translate-y-8 transition-all duration-1000">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
-            What Our <span className="text-purple-600 dark:text-purple-400">Customers</span> Say
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Dont just take our word for it. Here what our satisfied customers have to say about their experience with Malik Car Rent.
-          </p>
-        </div>
-
-        <div className="relative max-w-4xl mx-auto animate-on-scroll opacity-0 transform translate-y-8 transition-all duration-1000 animation-delay-300">
-          {/* Testimonial Cards */}
+        <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-8">Testimonials</h2>
+        <div className="relative max-w-4xl mx-auto">
           <div className="overflow-hidden">
             <div 
               className="flex transition-transform duration-500 ease-in-out"
               style={{ transform: `translateX(-${activeIndex * 100}%)` }}
             >
               {testimonials.map((testimonial) => (
-                <div 
-                  key={testimonial.id} 
-                  className="w-full flex-shrink-0 px-4"
-                >
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-10">
-                    <div className="flex flex-col md:flex-row gap-6 items-start">
-                      <div className="flex-shrink-0">
-                        <Image
-                          src={testimonial.image} 
-                          alt={testimonial.name} 
-                          className="w-20 h-20 rounded-full object-cover border-4 border-purple-100 dark:border-purple-900"
-                        />
-                      </div>
+                <div key={testimonial.id} className="w-full flex-shrink-0 p-4">
+                  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <div className="flex items-center gap-4">
+                      <Image
+                        src={testimonial.image} 
+                        alt={testimonial.name} 
+                        width={80}
+                        height={80}
+                        className="rounded-full border-4 border-gray-200 dark:border-gray-700"
+                      />
                       <div>
-                        <div className="flex items-center mb-2">
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white">{testimonial.name}</h4>
+                        <p className="text-gray-600 dark:text-gray-300">{testimonial.role}</p>
+                        <div className="flex">
                           {[...Array(5)].map((_, i) => (
-                            <Star 
-                              key={i} 
-                              className={`h-5 w-5 ${
-                                i < testimonial.rating 
-                                  ? 'text-yellow-400 fill-yellow-400' 
-                                  : 'text-gray-300 dark:text-gray-600'
-                              }`} 
-                            />
+                            <Star key={i} className={`h-5 w-5 ${i < testimonial.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
                           ))}
-                        </div>
-                        <p className="text-gray-700 dark:text-gray-300 mb-6 italic">
-                          {testimonial.text}
-                        </p>
-                        <div>
-                          <h4 className="text-lg font-bold text-gray-900 dark:text-white">
-                            {testimonial.name}
-                          </h4>
-                          <p className="text-purple-600 dark:text-purple-400">
-                            {testimonial.role}
-                          </p>
                         </div>
                       </div>
                     </div>
+                    <p className="text-gray-700 dark:text-gray-300 mt-4">{testimonial.text}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Navigation Buttons */}
-          <button
-            onClick={prevTestimonial}
-            className="absolute top-1/2 -left-4 md:-left-6 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500"
-            aria-label="Previous testimonial"
-          >
-            <ChevronLeft className="h-6 w-6" />
+          <button onClick={prevTestimonial} className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 p-2 rounded-full shadow">
+            <ChevronLeft className="w-6 h-6 text-gray-800 dark:text-white" />
           </button>
-          <button
-            onClick={nextTestimonial}
-            className="absolute top-1/2 -right-4 md:-right-6 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500"
-            aria-label="Next testimonial"
-          >
-            <ChevronRight className="h-6 w-6" />
+          <button onClick={nextTestimonial} className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 p-2 rounded-full shadow">
+            <ChevronRight className="w-6 h-6 text-gray-800 dark:text-white" />
           </button>
-
-          {/* Indicators */}
-          <div className="flex justify-center mt-8 space-x-2">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveIndex(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  activeIndex === index
-                    ? 'bg-purple-600 w-6'
-                    : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
-                }`}
-                aria-label={`Go to testimonial ${index + 1}`}
-              />
-            ))}
-          </div>
         </div>
       </div>
     </section>

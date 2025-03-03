@@ -6,7 +6,7 @@ interface NavbarProps {
   toggleDarkMode: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
+const Navbar: React.FC<NavbarProps> = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
