@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Star } from 'lucide-react';
 import CarBookingForm from './BookingForm';
+import Image from "next/image";
 
 interface Car {
   id: number;
@@ -199,7 +200,7 @@ const CarsSection: React.FC = () => {
               style={{ transitionDelay: `${index * 100}ms` }}
             >
               <div className="relative h-56 overflow-hidden">
-                <img
+                <Image
                   src={car.image}
                   alt={car.name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"

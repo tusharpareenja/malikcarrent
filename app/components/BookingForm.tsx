@@ -204,7 +204,7 @@ export default function CarBookingForm({ car, setIsOpen }: CarBookingFormProps) 
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Booking Confirmed!</h3>
             <p className="text-gray-400 mb-6">
-              Thank you for booking the {car.name}. We'll send the confirmation details to your email shortly.
+              Thank you for booking the {car.name}. We will contact you shortly.
             </p>
             <Button
               onClick={() => setIsOpen(false)}

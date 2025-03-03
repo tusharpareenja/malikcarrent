@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import Image from "next/image";
 
 interface Testimonial {
   id: number;
@@ -108,7 +109,7 @@ const TestimonialsSection: React.FC = () => {
             What Our <span className="text-purple-600 dark:text-purple-400">Customers</span> Say
           </h2>
           <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Don't just take our word for it. Here's what our satisfied customers have to say about their experience with Malik Car Rent.
+            Dont just take our word for it. Here what our satisfied customers have to say about their experience with Malik Car Rent.
           </p>
         </div>
 
@@ -127,7 +128,7 @@ const TestimonialsSection: React.FC = () => {
                   <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-10">
                     <div className="flex flex-col md:flex-row gap-6 items-start">
                       <div className="flex-shrink-0">
-                        <img 
+                        <Image
                           src={testimonial.image} 
                           alt={testimonial.name} 
                           className="w-20 h-20 rounded-full object-cover border-4 border-purple-100 dark:border-purple-900"
@@ -147,7 +148,7 @@ const TestimonialsSection: React.FC = () => {
                           ))}
                         </div>
                         <p className="text-gray-700 dark:text-gray-300 mb-6 italic">
-                          "{testimonial.text}"
+                          {testimonial.text}
                         </p>
                         <div>
                           <h4 className="text-lg font-bold text-gray-900 dark:text-white">

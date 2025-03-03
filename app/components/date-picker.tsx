@@ -30,7 +30,8 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
       <Calendar
         mode="single"
         selected={date || undefined}
-        onSelect={(day) => setDate(day ?? null)}
+        onSelect={(day: Date | undefined) => setDate(day || null)}
+
         initialFocus
         className="bg-gray-800 text-white"
         />

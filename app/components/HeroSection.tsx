@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React, { useEffect, useRef } from 'react';
 
 const HeroSection: React.FC = () => {
@@ -43,7 +44,7 @@ const HeroSection: React.FC = () => {
     <section id="home" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
       {/* Background with gradient overlay */}
       <div className="absolute inset-0 z-0">
-        <img
+        <Image
           src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
           alt="Luxury car background"
           className="w-full h-full object-cover"
