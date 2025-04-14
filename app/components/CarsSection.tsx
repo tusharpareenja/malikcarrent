@@ -22,10 +22,7 @@ interface Car {
   mileage: string;
   rating: number;
 }
-interface CarBookingFormProps {
-  car: Car;
-  setIsOpen: (open: boolean) => void;
-}
+
 
 const cars: Car[] = [
   {
