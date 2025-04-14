@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { DatePicker } from "./date-picker"
 import { format } from "date-fns"
+import { StaticImageData } from "next/image"
 
 // Define the Car interface to match what's coming from CarsSection
 interface Car {
@@ -14,7 +15,7 @@ interface Car {
   name: string;
   category: string;
   price: number;
-  image: string;
+  image: StaticImageData;
   seats: number;
   transmission: string;
   fuelType: string;

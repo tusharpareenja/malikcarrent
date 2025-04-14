@@ -1,64 +1,75 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Star } from 'lucide-react';
 import CarBookingForm from './BookingForm';
+import type { StaticImageData } from 'next/image';
 import Image from "next/image";
+import baleno from'../../public/cars/baleno.jpg'
+import ciaz from'../../public/cars/ciaz.jpeg'
+import oldfortuner from'../../public/cars/oldfortuner.jpg'
+import fortuner from'../../public/cars/sigma.jpg'
+import legender from'../../public/cars/legender.jpg'
+import scorpio from'../../public/cars/scorpios11.jpg'
 
 interface Car {
   id: number;
   name: string;
   category: string;
   price: number;
-  image: string;
+  image:  StaticImageData;
   seats: number;
   transmission: string;
   fuelType: string;
   mileage: string;
   rating: number;
 }
+interface CarBookingFormProps {
+  car: Car;
+  setIsOpen: (open: boolean) => void;
+}
 
 const cars: Car[] = [
   {
     id: 1,
-    name: 'Audi A4',
-    category: 'Sedan',
-    price: 5000,
-    image: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    name: 'Baleno',
+    category: 'Hatchback',
+    price: 2199,
+    image: baleno,
     seats: 5,
-    transmission: 'Automatic',
-    fuelType: 'Petrol',
-    mileage: '14 km/l',
+    transmission: 'Manual',
+    fuelType: 'Diesel',
+    mileage: '25 km/l',
     rating: 4.8
   },
   {
     id: 2,
-    name: 'BMW X5',
-    category: 'SUV',
-    price: 8000,
-    image: 'https://images.unsplash.com/photo-1556189250-72ba954cfc2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    seats: 7,
-    transmission: 'Automatic',
+    name: 'Ciaz',
+    category: 'Sedan',
+    price: 2699,
+    image: ciaz,
+    seats: 5,
+    transmission: 'Manual',
     fuelType: 'Diesel',
-    mileage: '12 km/l',
+    mileage: '25 km/l',
     rating: 4.9
   },
   {
     id: 3,
-    name: 'Mercedes C-Class',
-    category: 'Sedan',
-    price: 6000,
-    image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    seats: 5,
-    transmission: 'Automatic',
-    fuelType: 'Petrol',
+    name: 'Fortuner Type 2',
+    category: 'SUV',
+    price: 3999,
+    image: oldfortuner,
+    seats: 7,
+    transmission: 'Manual',
+    fuelType: 'Diesel',
     mileage: '15 km/l',
     rating: 4.7
   },
   {
     id: 4,
-    name: 'Toyota Fortuner',
+    name: 'Fortuner Sigma 4',
     category: 'SUV',
-    price: 4500,
-    image: 'https://images.unsplash.com/photo-1625695325335-8c3df2a458cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    price: 6999,
+    image: fortuner,
     seats: 7,
     transmission: 'Automatic',
     fuelType: 'Diesel',
@@ -67,26 +78,26 @@ const cars: Car[] = [
   },
   {
     id: 5,
-    name: 'Honda City',
-    category: 'Sedan',
-    price: 3000,
-    image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    seats: 5,
-    transmission: 'Manual',
-    fuelType: 'Petrol',
-    mileage: '18 km/l',
+    name: 'Fortuner Legender',
+    category: 'SUV',
+    price: 7999,
+    image: legender,
+    seats: 7,
+    transmission: 'Automatic',
+    fuelType: 'Diesel',
+    mileage: '14 km/l',
     rating: 4.5
   },
   {
     id: 6,
-    name: 'Porsche 911',
-    category: 'Sports',
-    price: 12000,
-    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    seats: 2,
-    transmission: 'Automatic',
+    name: 'Scorpio s11',
+    category: 'SUV',
+    price: 3999,
+    image: scorpio,
+    seats: 7,
+    transmission: 'Manual',
     fuelType: 'Petrol',
-    mileage: '10 km/l',
+    mileage: '15 km/l',
     rating: 5.0
   }
 ];
