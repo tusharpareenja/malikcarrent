@@ -11,7 +11,7 @@ import legender from'../../public/cars/legender.jpg'
 import scorpio from'../../public/cars/scorpios11.jpg'
 import thar from'../../public/cars/thar.jpg'
 import roxx from'../../public/cars/roxx.webp'
-
+import verna from'../../public/cars/verna.jpg'
 interface Car {
   id: number;
   name: string;
@@ -127,8 +127,21 @@ const cars: Car[] = [
     seats: 5,
     transmission: 'Automatic',
     wheeldrive: '4x4',
-    fuelType: 'Petrol',
+    fuelType: 'Diesel',
     mileage: '15 km/l',
+    rating: 5.0
+  },
+  {
+    id: 9,
+    name: 'Verna',
+    category: 'Sedan',
+    price: 2999,
+    image: verna,
+    seats: 5,
+    transmission: 'Automatic',
+    wheeldrive: '4x2',
+    fuelType: 'Diesel',
+    mileage: '18 km/l',
     rating: 5.0
   }
 ];
