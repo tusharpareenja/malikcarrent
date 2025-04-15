@@ -23,7 +23,7 @@ interface Car {
   fuelType: string;
   mileage: string;
   rating: number;
-  wheeldrive: String;
+  wheeldrive: string;
 }
 
 const cars: Car[] = [
@@ -243,7 +243,7 @@ const CarsSection: React.FC = () => {
               <input
                 type="range"
                 min="1000"
-                max="12000"
+                max="10000"
                 step="500"
                 value={priceRange}
                 onChange={(e) => setPriceRange(parseInt(e.target.value))}
