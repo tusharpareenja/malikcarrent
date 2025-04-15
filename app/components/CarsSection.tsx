@@ -3,12 +3,14 @@ import { Star } from 'lucide-react';
 import CarBookingForm from './BookingForm';
 import type { StaticImageData } from 'next/image';
 import Image from "next/image";
-import baleno from'../../public/cars/baleno.jpg'
-import ciaz from'../../public/cars/ciaz.jpeg'
-import oldfortuner from'../../public/cars/oldfortuner.jpg'
-import fortuner from'../../public/cars/sigma.jpg'
+import baleno from'../../public/cars/baleno.webp'
+import ciaz from'../../public/cars/ciaz.webp'
+import oldfortuner from'../../public/cars/fortunerold.jpg'
+import fortuner from'../../public/cars/fortunersigma.jpg'
 import legender from'../../public/cars/legender.jpg'
 import scorpio from'../../public/cars/scorpios11.jpg'
+import thar from'../../public/cars/thar.jpg'
+import roxx from'../../public/cars/roxx.webp'
 
 interface Car {
   id: number;
@@ -21,8 +23,8 @@ interface Car {
   fuelType: string;
   mileage: string;
   rating: number;
+  wheeldrive: String;
 }
-
 
 const cars: Car[] = [
   {
@@ -31,6 +33,7 @@ const cars: Car[] = [
     category: 'Hatchback',
     price: 2199,
     image: baleno,
+    wheeldrive: '4x2',
     seats: 5,
     transmission: 'Manual',
     fuelType: 'Diesel',
@@ -41,8 +44,9 @@ const cars: Car[] = [
     id: 2,
     name: 'Ciaz',
     category: 'Sedan',
-    price: 2699,
+    price: 2499,
     image: ciaz,
+    wheeldrive: '4x2',
     seats: 5,
     transmission: 'Manual',
     fuelType: 'Diesel',
@@ -53,10 +57,11 @@ const cars: Car[] = [
     id: 3,
     name: 'Fortuner Type 2',
     category: 'SUV',
-    price: 3999,
+    price: 4499,
     image: oldfortuner,
     seats: 7,
     transmission: 'Manual',
+    wheeldrive: '4x4',
     fuelType: 'Diesel',
     mileage: '15 km/l',
     rating: 4.7
@@ -69,6 +74,7 @@ const cars: Car[] = [
     image: fortuner,
     seats: 7,
     transmission: 'Automatic',
+    wheeldrive: '4x4',
     fuelType: 'Diesel',
     mileage: '14 km/l',
     rating: 4.6
@@ -81,6 +87,7 @@ const cars: Car[] = [
     image: legender,
     seats: 7,
     transmission: 'Automatic',
+    wheeldrive: '4x4',
     fuelType: 'Diesel',
     mileage: '14 km/l',
     rating: 4.5
@@ -92,7 +99,34 @@ const cars: Car[] = [
     price: 3999,
     image: scorpio,
     seats: 7,
+    wheeldrive: '4x2',
     transmission: 'Manual',
+    fuelType: 'Petrol',
+    mileage: '15 km/l',
+    rating: 5.0
+  },
+  {
+    id: 7,
+    name: 'Thar',
+    category: 'SUV',
+    price: 3999,
+    image: thar,
+    seats: 5,
+    transmission: 'Automatic',
+    wheeldrive: '4x4',
+    fuelType: 'Diesel',
+    mileage: '14 km/l',
+    rating: 4.5
+  },
+  {
+    id: 8,
+    name: 'Thar Roxx',
+    category: 'SUV',
+    price: 4999,
+    image: roxx,
+    seats: 5,
+    transmission: 'Automatic',
+    wheeldrive: '4x4',
     fuelType: 'Petrol',
     mileage: '15 km/l',
     rating: 5.0
@@ -104,9 +138,10 @@ const CarsSection: React.FC = () => {
   const [priceRange, setPriceRange] = useState(12000);
   const [open, setisopen] = useState(false);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+  const [activeCardId, setActiveCardId] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
-  const categories = ['All', 'Sedan', 'SUV', 'Sports'];
+  const categories = ['All', 'Sedan', 'SUV', 'Hatchback'];
 
   const filteredCars = cars.filter(car => {
     const categoryMatch = activeFilter === 'All' || car.category === activeFilter;
@@ -138,14 +173,33 @@ const CarsSection: React.FC = () => {
       observer.observe(el);
     });
 
+    // Add click event listener to handle clicks outside of car cards
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.car-card')) {
+        setActiveCardId(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
     return () => {
       observer.disconnect();
+      document.removeEventListener('click', handleClickOutside);
     };
   }, [filteredCars]);
 
   const handleRentNow = (car: Car) => {
     setSelectedCar(car);
     setisopen(true);
+  };
+
+  const handleCardClick = (e: React.MouseEvent, carId: number) => {
+    // Prevent triggering when clicking the Rent Now button
+    if (!(e.target as HTMLElement).closest('button')) {
+      e.stopPropagation();
+      setActiveCardId(activeCardId === carId ? null : carId);
+    }
   };
 
   return (
@@ -204,7 +258,8 @@ const CarsSection: React.FC = () => {
           {filteredCars.map((car, index) => (
             <div
               key={car.id}
-              className="car-card bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group opacity-0 translate-y-8"
+              onClick={(e) => handleCardClick(e, car.id)}
+              className={`car-card bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group opacity-0 translate-y-8 cursor-pointer`}
               style={{ transitionDelay: `${index * 100}ms` }}
             >
               <div className="relative h-56 overflow-hidden">
@@ -214,7 +269,10 @@ const CarsSection: React.FC = () => {
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <div 
+                  className={`absolute inset-0 bg-gradient-to-t from-black/70 to-transparent transition-opacity duration-300 flex items-end p-4 
+                    ${activeCardId === car.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                >
                   <div className="text-white">
                     <div className="flex items-center mb-1">
                       <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
@@ -230,14 +288,19 @@ const CarsSection: React.FC = () => {
                       <span className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs">
                         {car.fuelType}
                       </span>
+                      <span className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs">
+                        {car.mileage}
+                      </span>
+                      <span className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs">
+                        {car.wheeldrive}
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
-                <h3 className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-sm">{car.name}</h3>
-
+                  <h3 className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-sm">{car.name}</h3>
                   <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-sm">
                     {car.category}
                   </span>
@@ -248,7 +311,7 @@ const CarsSection: React.FC = () => {
                     <span className="text-gray-700 dark:text-gray-400 text-sm ml-1">/day</span>
                   </div>
                   <button 
-                   onClick={() => handleRentNow(car)}
+                    onClick={() => handleRentNow(car)}
                     className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
                   >
                     Rent Now
@@ -261,7 +324,6 @@ const CarsSection: React.FC = () => {
       </div>
       {open && selectedCar && <CarBookingForm car={selectedCar} setIsOpen={setisopen} />}
     </section>
-    
   );
 };
 

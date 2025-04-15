@@ -199,7 +199,7 @@ const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Social Media</h4>
-                    <p className="text-gray-600 dark:text-gray-300">@malikcarrent</p>
+                    <p className="text-gray-600 dark:text-gray-300">@malik_car_rent_chandigarh</p>
                   </div>
                 </div>
               </div>
