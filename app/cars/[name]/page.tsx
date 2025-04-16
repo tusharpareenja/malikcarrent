@@ -30,14 +30,10 @@ export default function CarDetailPage({ params }: { params: { name: string } }) 
   const [additionalFees, setAdditionalFees] = useState(0)
   const [theme, setTheme] = useState<Theme>("light");
 
-
-
-
   // Calculate price based on pickup and drop locations
   useEffect(() => {
     let fees = 0
     
-
     if (pickupLocation !== "kharar") {
       fees += 500
     }
@@ -167,8 +163,6 @@ export default function CarDetailPage({ params }: { params: { name: string } }) 
                   <p className="text-sm font-medium">{car.wheeldrive}</p>
                 </CardContent>
               </Card>
-
-
             </div>
           </div>
 
@@ -277,7 +271,6 @@ export default function CarDetailPage({ params }: { params: { name: string } }) 
 
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 <p>* Fuel policy: Return with same fuel level</p>
-                
               </div>
             </div>
           </div>
