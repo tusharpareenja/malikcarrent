@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Car, MapPin, Calendar, Clock, Info, Moon, Sun, ChevronLeft, Star, Cog, Fuel, CircleGauge, LifeBuoy } from "lucide-react"
+import { Car, Info, Moon, Sun, ChevronLeft, Star, Cog, Fuel, CircleGauge, LifeBuoy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -25,16 +25,13 @@ export default function CarDetailPage({ params }: { params: { name: string } }) 
   
   const [pickupLocation, setPickupLocation] = useState("kharar")
   const [dropLocation, setDropLocation] = useState("kharar")
-  const [basePrice, setBasePrice] = useState(car?.price || 2500)
+
   const [totalPrice, setTotalPrice] = useState(car?.price || 2500)
   const [additionalFees, setAdditionalFees] = useState(0)
   const [theme, setTheme] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false)
 
-  // Ensure theme component only renders client-side to avoid hydration mismatch
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+
+
 
   // Calculate price based on pickup and drop locations
   useEffect(() => {

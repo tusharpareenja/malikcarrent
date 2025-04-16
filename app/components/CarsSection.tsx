@@ -236,11 +236,6 @@ const CarsSection: React.FC = () => {
     };
   }, [filteredCars]);
 
-  const handleRentNow = (e: React.MouseEvent, car: Car) => {
-    e.stopPropagation(); // Prevent redirect when clicking the button
-    setSelectedCar(car);
-    setisopen(true);
-  };
 
   const navigateToCarDetail = (car: Car) => {
     // Encode car name for URL - replace spaces with hyphens and make lowercase
