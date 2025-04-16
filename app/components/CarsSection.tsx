@@ -3,15 +3,19 @@ import { Star } from 'lucide-react';
 import CarBookingForm from './BookingForm';
 import type { StaticImageData } from 'next/image';
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import baleno from'../../public/cars/baleno.webp'
 import ciaz from'../../public/cars/ciaz.webp'
-import oldfortuner from'../../public/cars/fortunerold.jpg'
+import oldfortuner from'../../public/cars/oldfortuner.webp'
 import fortuner from'../../public/cars/fortunersigma.jpg'
 import legender from'../../public/cars/legender.jpg'
 import scorpio from'../../public/cars/scorpios11.jpg'
 import thar from'../../public/cars/thar.jpg'
 import roxx from'../../public/cars/roxx.webp'
 import verna from'../../public/cars/verna.jpg'
+import audi from'../../public/cars/audia6.webp'
+import xuv from'../../public/cars/xuv.jpg'
+
 interface Car {
   id: number;
   name: string;
@@ -37,7 +41,7 @@ const cars: Car[] = [
     seats: 5,
     transmission: 'Manual',
     fuelType: 'Diesel',
-    mileage: '25 km/l',
+    mileage: '25+ km/l',
     rating: 4.8
   },
   {
@@ -50,7 +54,7 @@ const cars: Car[] = [
     seats: 5,
     transmission: 'Manual',
     fuelType: 'Diesel',
-    mileage: '25 km/l',
+    mileage: '25+ km/l',
     rating: 4.9
   },
   {
@@ -63,7 +67,7 @@ const cars: Car[] = [
     transmission: 'Manual',
     wheeldrive: '4x4',
     fuelType: 'Diesel',
-    mileage: '15 km/l',
+    mileage: '12+ km/l',
     rating: 4.7
   },
   {
@@ -76,7 +80,7 @@ const cars: Car[] = [
     transmission: 'Automatic',
     wheeldrive: '4x4',
     fuelType: 'Diesel',
-    mileage: '14 km/l',
+    mileage: '12+ km/l',
     rating: 4.6
   },
   {
@@ -89,7 +93,7 @@ const cars: Car[] = [
     transmission: 'Automatic',
     wheeldrive: '4x4',
     fuelType: 'Diesel',
-    mileage: '14 km/l',
+    mileage: '12+ km/l',
     rating: 4.5
   },
   {
@@ -102,7 +106,7 @@ const cars: Car[] = [
     wheeldrive: '4x2',
     transmission: 'Manual',
     fuelType: 'Petrol',
-    mileage: '15 km/l',
+    mileage: '15+ km/l',
     rating: 5.0
   },
   {
@@ -115,7 +119,7 @@ const cars: Car[] = [
     transmission: 'Automatic',
     wheeldrive: '4x4',
     fuelType: 'Diesel',
-    mileage: '14 km/l',
+    mileage: '15+ km/l',
     rating: 4.5
   },
   {
@@ -128,7 +132,7 @@ const cars: Car[] = [
     transmission: 'Automatic',
     wheeldrive: '4x4',
     fuelType: 'Diesel',
-    mileage: '15 km/l',
+    mileage: '15+ km/l',
     rating: 5.0
   },
   {
@@ -141,12 +145,42 @@ const cars: Car[] = [
     transmission: 'Automatic',
     wheeldrive: '4x2',
     fuelType: 'Diesel',
-    mileage: '18 km/l',
+    mileage: '18+ km/l',
+    rating: 5.0
+  },
+  {
+    id: 10,
+    name: 'XUV 500',
+    category: 'SUV',
+    price: 3999,
+    image: xuv,
+    seats: 7,
+    transmission: 'Manual',
+    wheeldrive: '4x2',
+    fuelType: 'Diesel',
+    mileage: '15+ km/l',
+    rating: 5.0
+  },
+  {
+    id: 11,
+    name: 'Audi A6 Matrix',
+    category: 'Luxury',
+    price: 9999,
+    image: audi,
+    seats: 5,
+    transmission: 'Automatic',
+    wheeldrive: '4x2',
+    fuelType: 'Diesel',
+    mileage: '16+ km/l',
     rating: 5.0
   }
 ];
 
+// Export cars data so it can be accessed by other components
+export { cars };
+
 const CarsSection: React.FC = () => {
+  const router = useRouter();
   const [activeFilter, setActiveFilter] = useState('All');
   const [priceRange, setPriceRange] = useState(12000);
   const [open, setisopen] = useState(false);
@@ -154,7 +188,7 @@ const CarsSection: React.FC = () => {
   const [activeCardId, setActiveCardId] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
-  const categories = ['All', 'Sedan', 'SUV', 'Hatchback'];
+  const categories = ['All', 'Sedan', 'SUV', 'Hatchback', 'Luxury'];
 
   const filteredCars = cars.filter(car => {
     const categoryMatch = activeFilter === 'All' || car.category === activeFilter;
@@ -202,17 +236,22 @@ const CarsSection: React.FC = () => {
     };
   }, [filteredCars]);
 
-  const handleRentNow = (car: Car) => {
+  const handleRentNow = (e: React.MouseEvent, car: Car) => {
+    e.stopPropagation(); // Prevent redirect when clicking the button
     setSelectedCar(car);
     setisopen(true);
   };
 
-  const handleCardClick = (e: React.MouseEvent, carId: number) => {
-    // Prevent triggering when clicking the Rent Now button
-    if (!(e.target as HTMLElement).closest('button')) {
-      e.stopPropagation();
-      setActiveCardId(activeCardId === carId ? null : carId);
-    }
+  const navigateToCarDetail = (car: Car) => {
+    // Encode car name for URL - replace spaces with hyphens and make lowercase
+    const carSlug = car.name.toLowerCase().replace(/\s+/g, '-');
+    router.push(`/cars/${carSlug}?id=${car.id}`);
+  };
+
+  const handleCardClick = (e: React.MouseEvent, car: Car) => {
+  
+      navigateToCarDetail(car);
+    
   };
 
   return (
@@ -271,7 +310,7 @@ const CarsSection: React.FC = () => {
           {filteredCars.map((car, index) => (
             <div
               key={car.id}
-              onClick={(e) => handleCardClick(e, car.id)}
+              onClick={(e) => handleCardClick(e, car)}
               className={`car-card bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group opacity-0 translate-y-8 cursor-pointer`}
               style={{ transitionDelay: `${index * 100}ms` }}
             >
@@ -324,7 +363,7 @@ const CarsSection: React.FC = () => {
                     <span className="text-gray-700 dark:text-gray-400 text-sm ml-1">/day</span>
                   </div>
                   <button 
-                    onClick={() => handleRentNow(car)}
+                    onClick={(e) => handleCardClick(e, car)}
                     className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
                   >
                     Rent Now
