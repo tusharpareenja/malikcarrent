@@ -25,7 +25,7 @@ export default function CarDetailPage({ params }: { params: { name: string } }) 
   
   const [pickupLocation, setPickupLocation] = useState("kharar")
   const [dropLocation, setDropLocation] = useState("kharar")
-  const [basePrice, setBasePrice] = useState(car?.price || 2500)
+  const [basePrice] = useState(car?.price || 2500)
   const [totalPrice, setTotalPrice] = useState(car?.price || 2500)
   const [additionalFees, setAdditionalFees] = useState(0)
   const [theme, setTheme] = useState<Theme>("light");

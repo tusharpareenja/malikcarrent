@@ -184,7 +184,7 @@ const CarsSection: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [priceRange, setPriceRange] = useState(12000);
   const [open, setisopen] = useState(false);
-  const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+  const [selectedCar] = useState<Car | null>(null);
   const [activeCardId, setActiveCardId] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
