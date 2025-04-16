@@ -25,7 +25,7 @@ export default function CarDetailPage({ params }: { params: { name: string } }) 
   
   const [pickupLocation, setPickupLocation] = useState("kharar")
   const [dropLocation, setDropLocation] = useState("kharar")
-
+  const [basePrice, setBasePrice] = useState(car?.price || 2500)
   const [totalPrice, setTotalPrice] = useState(car?.price || 2500)
   const [additionalFees, setAdditionalFees] = useState(0)
   const [theme, setTheme] = useState<Theme>("light");
@@ -36,6 +36,7 @@ export default function CarDetailPage({ params }: { params: { name: string } }) 
   // Calculate price based on pickup and drop locations
   useEffect(() => {
     let fees = 0
+    
 
     if (pickupLocation !== "kharar") {
       fees += 500
