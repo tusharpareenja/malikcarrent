@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect, useRef } from 'react';
 import { Star } from 'lucide-react';
 import CarBookingForm from './BookingForm';
@@ -16,7 +17,7 @@ import verna from'../../public/cars/verna.jpg'
 import audi from'../../public/cars/audia6.webp'
 import xuv from'../../public/cars/xuv.jpg'
 
-interface Car {
+export interface CarType {
   id: number;
   name: string;
   category: string;
@@ -30,7 +31,7 @@ interface Car {
   wheeldrive: string;
 }
 
-const cars: Car[] = [
+const cars: CarType[] = [
   {
     id: 1,
     name: 'Baleno',
@@ -184,7 +185,7 @@ const CarsSection: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [priceRange, setPriceRange] = useState(12000);
   const [open, setisopen] = useState(false);
-  const [selectedCar] = useState<Car | null>(null);
+  const [selectedCar] = useState<CarType | null>(null);
   const [activeCardId, setActiveCardId] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -210,43 +211,28 @@ const CarsSection: React.FC = () => {
       { threshold: 0.1 }
     );
 
-    // Observe the section
+    // Observe the section and car cards
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
 
-    // Observe all car cards
     document.querySelectorAll('.car-card').forEach((el) => {
       observer.observe(el);
     });
 
-    // Add click event listener to handle clicks outside of car cards
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest('.car-card')) {
-        setActiveCardId(null);
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-
     return () => {
       observer.disconnect();
-      document.removeEventListener('click', handleClickOutside);
     };
   }, [filteredCars]);
 
-
-  const navigateToCarDetail = (car: Car) => {
-    // Encode car name for URL - replace spaces with hyphens and make lowercase
-    const carSlug = car.name.toLowerCase().replace(/\s+/g, '-');
-    router.push(`/cars/${carSlug}?id=${car.id}`);
-  };
-
-  const handleCardClick = (e: React.MouseEvent, car: Car) => {
-  
-      navigateToCarDetail(car);
-    
+  // Simple navigation function that just uses car ID
+  const navigateToCarDetail = (carId: number) => {
+    // Store selected car in localStorage
+    const carToStore = cars.find(car => car.id === carId);
+    if (carToStore) {
+      localStorage.setItem('selectedCar', JSON.stringify(carId));
+      router.push(`/cars/detail`); 
+    }
   };
 
   return (
@@ -256,7 +242,7 @@ const CarsSection: React.FC = () => {
       className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-300"
     >
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12 animate-on-scroll opacity-0 transform translate-y-8 transition-all duration-1000">
+        <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 t dark:text-black text-black">
             Our Premium <span className="text-purple-600 dark:text-purple-400">Fleet</span>
           </h2>
@@ -266,7 +252,7 @@ const CarsSection: React.FC = () => {
         </div>
 
         {/* Filters */}
-        <div className="mb-12 animate-on-scroll opacity-0 transform translate-y-8 transition-all duration-1000 animation-delay-300">
+        <div className="mb-12">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex flex-wrap gap-2">
               {categories.map(category => (
@@ -305,8 +291,8 @@ const CarsSection: React.FC = () => {
           {filteredCars.map((car, index) => (
             <div
               key={car.id}
-              onClick={(e) => handleCardClick(e, car)}
-              className={`car-card bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group opacity-0 translate-y-8 cursor-pointer`}
+              className="car-card bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group cursor-pointer"
+              onClick={() => navigateToCarDetail(car.id)}
               style={{ transitionDelay: `${index * 100}ms` }}
             >
               <div className="relative h-56 overflow-hidden">
@@ -316,10 +302,7 @@ const CarsSection: React.FC = () => {
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <div 
-                  className={`absolute inset-0 bg-gradient-to-t from-black/70 to-transparent transition-opacity duration-300 flex items-end p-4 
-                    ${activeCardId === car.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-                >
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                   <div className="text-white">
                     <div className="flex items-center mb-1">
                       <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
@@ -334,12 +317,6 @@ const CarsSection: React.FC = () => {
                       </span>
                       <span className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs">
                         {car.fuelType}
-                      </span>
-                      <span className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs">
-                        {car.mileage}
-                      </span>
-                      <span className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs">
-                        {car.wheeldrive}
                       </span>
                     </div>
                   </div>
@@ -358,7 +335,10 @@ const CarsSection: React.FC = () => {
                     <span className="text-gray-700 dark:text-gray-400 text-sm ml-1">/day</span>
                   </div>
                   <button 
-                    onClick={(e) => handleCardClick(e, car)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigateToCarDetail(car.id);
+                    }}
                     className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
                   >
                     Rent Now
@@ -375,3 +355,10 @@ const CarsSection: React.FC = () => {
 };
 
 export default CarsSection;
+
+
+
+
+
+
+

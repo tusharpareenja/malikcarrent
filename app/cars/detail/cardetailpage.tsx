@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { Car, Info, Moon, Sun, ChevronLeft, Star, Cog, Fuel, CircleGauge, LifeBuoy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -10,25 +10,45 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import Navbar from "@/app/components/Navbar"
-import { cars } from "@/app/components/CarsSection" // Import cars data
+import { cars, CarType } from "@/app/components/CarsSection" // Import cars data
 
 type Theme = "light" | "dark";
 
-export default function CarDetailPage({ params }: { params: { name: string } }) {
+export default function CarDetailClient() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const carId = searchParams.get("id");
+  const [car, setCar] = useState<CarType | null>(null);
   
-  // Find the car based on ID or slug
-  const car = cars.find(c => c.id.toString() === carId) || 
-              cars.find(c => c.name.toLowerCase().replace(/\s+/g, '-') === params.name);
+  // Load the car data from localStorage on component mount
+  useEffect(() => {
+    const carId = localStorage.getItem('selectedCar');
+    if (carId) {
+      const selectedCar = cars.find(c => c.id === parseInt(carId));
+      if (selectedCar) {
+        setCar(selectedCar);
+      } else {
+        // If car not found, go back to cars section
+        router.push("/#cars");
+      }
+    } else {
+      // If no car selected, go back to cars section
+      router.push("/#cars");
+    }
+  }, [router]);
   
   const [pickupLocation, setPickupLocation] = useState("kharar")
   const [dropLocation, setDropLocation] = useState("kharar")
-  const [basePrice] = useState(car?.price || 2500)
-  const [totalPrice, setTotalPrice] = useState(car?.price || 2500)
+  const [basePrice, setBasePrice] = useState(2500)
+  const [totalPrice, setTotalPrice] = useState(2500)
   const [additionalFees, setAdditionalFees] = useState(0)
   const [theme, setTheme] = useState<Theme>("light");
+
+  // Update base price when car changes
+  useEffect(() => {
+    if (car) {
+      setBasePrice(car.price);
+      setTotalPrice(car.price);
+    }
+  }, [car]);
 
   // Calculate price based on pickup and drop locations
   useEffect(() => {
@@ -77,12 +97,11 @@ export default function CarDetailPage({ params }: { params: { name: string } }) 
     }
   }, [theme]);
 
-  // If car not found, display error message
+  // If car data is still loading or not found
   if (!car) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center flex-col">
-        <h1 className="text-2xl font-bold mb-4">Car not found</h1>
-        <Button onClick={() => router.push("/#cars")}>Back to Cars</Button>
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
       </div>
     );
   }
@@ -96,9 +115,9 @@ export default function CarDetailPage({ params }: { params: { name: string } }) 
         aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
       >
         {theme === "dark" ? (
-          <Sun className="h-[1.5rem] w-[1.5rem] text-yellow-500 transition-transform duration-300" />
+          <Sun className="h-6 w-6 text-yellow-500 transition-transform duration-300" />
         ) : (
-          <Moon className="h-[1.5rem] w-[1.5rem] text-gray-800 transition-transform duration-300" />
+          <Moon className="h-6 w-6 text-gray-800 transition-transform duration-300" />
         )}
       </Button>
       <div className="container mx-auto py-8 px-4 mt-7">
@@ -111,7 +130,6 @@ export default function CarDetailPage({ params }: { params: { name: string } }) 
             <ChevronLeft className="h-4 w-4" />
             Back
           </Button>
-          
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-5">
