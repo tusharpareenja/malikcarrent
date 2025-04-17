@@ -186,7 +186,7 @@ const CarsSection: React.FC = () => {
   const [priceRange, setPriceRange] = useState(12000);
   const [open, setisopen] = useState(false);
   const [selectedCar] = useState<CarType | null>(null);
-  const [activeCardId, setActiveCardId] = useState<number | null>(null);
+
   const sectionRef = useRef<HTMLElement>(null);
 
   const categories = ['All', 'Sedan', 'SUV', 'Hatchback', 'Luxury'];
