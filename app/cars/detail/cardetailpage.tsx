@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -10,50 +12,69 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import Navbar from "@/app/components/Navbar"
-import { cars, CarType } from "@/app/components/CarsSection" // Import cars data
+import { cars, type CarType } from "@/app/components/CarsSection" // Import cars data
+// Add these imports at the top with the other imports
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { format, addDays, differenceInDays } from "date-fns"
 
-type Theme = "light" | "dark";
+type Theme = "light" | "dark"
 
 export default function CarDetailClient() {
-  const router = useRouter();
-  const [car, setCar] = useState<CarType | null>(null);
-  
+  const router = useRouter()
+  const [car, setCar] = useState<CarType | null>(null)
+
   // Load the car data from localStorage on component mount
   useEffect(() => {
-    const carId = localStorage.getItem('selectedCar');
+    const carId = localStorage.getItem("selectedCar")
     if (carId) {
-      const selectedCar = cars.find(c => c.id === parseInt(carId));
+      const selectedCar = cars.find((c) => c.id === Number.parseInt(carId))
       if (selectedCar) {
-        setCar(selectedCar);
+        setCar(selectedCar)
       } else {
         // If car not found, go back to cars section
-        router.push("/#cars");
+        router.push("/#cars")
       }
     } else {
       // If no car selected, go back to cars section
-      router.push("/#cars");
+      router.push("/#cars")
     }
-  }, [router]);
-  
+  }, [router])
+
   const [pickupLocation, setPickupLocation] = useState("kharar")
   const [dropLocation, setDropLocation] = useState("kharar")
   const [basePrice, setBasePrice] = useState(2500)
   const [totalPrice, setTotalPrice] = useState(2500)
   const [additionalFees, setAdditionalFees] = useState(0)
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("light")
+
+  // Add these state variables in the component after the existing useState declarations
+  const [fromDate, setFromDate] = useState<Date | undefined>(new Date())
+  const [toDate, setToDate] = useState<Date | undefined>(addDays(new Date(), 1))
+  const [numberOfDays, setNumberOfDays] = useState(1)
+  const [bookingOpen, setBookingOpen] = useState(false)
+  const [bookingForm, setBookingForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    dob: "",
+  })
 
   // Update base price when car changes
   useEffect(() => {
     if (car) {
-      setBasePrice(car.price);
-      setTotalPrice(car.price);
+      setBasePrice(car.price)
+      setTotalPrice(car.price)
     }
-  }, [car]);
+  }, [car])
 
   // Calculate price based on pickup and drop locations
   useEffect(() => {
     let fees = 0
-    
+
     if (pickupLocation !== "kharar") {
       fees += 500
     }
@@ -65,6 +86,45 @@ export default function CarDetailClient() {
     setAdditionalFees(fees)
     setTotalPrice(basePrice + fees)
   }, [pickupLocation, dropLocation, basePrice])
+
+  // Add this useEffect after the other useEffect hooks to calculate days and update price
+  useEffect(() => {
+    if (fromDate && toDate) {
+      const days = Math.max(1, differenceInDays(toDate, fromDate))
+      setNumberOfDays(days)
+      setTotalPrice((basePrice + additionalFees) * days)
+    }
+  }, [fromDate, toDate, basePrice, additionalFees])
+
+  // Add this function to handle booking form input changes
+  const handleBookingInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setBookingForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  // Add this function to handle booking submission
+  const handleBookingSubmit = () => {
+    // Here you would typically send the booking data to your backend
+    console.log("Booking submitted:", {
+      car: car?.name,
+      fromDate,
+      toDate,
+      numberOfDays,
+      totalPrice,
+      pickupLocation,
+      dropLocation,
+      ...bookingForm,
+    })
+
+    // Close the dialog
+    setBookingOpen(false)
+
+    // Show confirmation (you could add a toast notification here)
+    alert("Proceeding to payment...")
+  }
 
   const locations = [
     { value: "kharar", label: "Kharar" },
@@ -80,22 +140,22 @@ export default function CarDetailClient() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("theme") as Theme | null;
-      const preferredTheme = savedTheme || 
-        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      const savedTheme = localStorage.getItem("theme") as Theme | null
+      const preferredTheme =
+        savedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
 
-      setTheme(preferredTheme);
+      setTheme(preferredTheme)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      document.documentElement.classList.remove("light", "dark");
-      document.documentElement.classList.add(theme);
-      document.documentElement.setAttribute("data-theme", theme);
-      localStorage.setItem("theme", theme);
+      document.documentElement.classList.remove("light", "dark")
+      document.documentElement.classList.add(theme)
+      document.documentElement.setAttribute("data-theme", theme)
+      localStorage.setItem("theme", theme)
     }
-  }, [theme]);
+  }, [theme])
 
   // If car data is still loading or not found
   if (!car) {
@@ -103,7 +163,7 @@ export default function CarDetailClient() {
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
       </div>
-    );
+    )
   }
 
   return (
@@ -122,11 +182,7 @@ export default function CarDetailClient() {
       </Button>
       <div className="container mx-auto py-8 px-4 mt-7">
         <div className="flex justify-between items-center mb-6">
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 mb-4 mt-4"
-            onClick={() => router.back()}
-          >
+          <Button variant="outline" className="flex items-center gap-2 mb-4 mt-4" onClick={() => router.back()}>
             <ChevronLeft className="h-4 w-4" />
             Back
           </Button>
@@ -137,12 +193,7 @@ export default function CarDetailClient() {
           <div className="order-2 md:order-1">
             <div className="rounded-xl overflow-hidden border shadow-sm dark:border-gray-800">
               <div className="relative h-96">
-                <Image
-                  src={car.image}
-                  alt={car.name}
-                  fill
-                  className="object-cover"
-                />
+                <Image src={car.image || "/placeholder.svg"} alt={car.name} fill className="object-cover" />
               </div>
             </div>
 
@@ -196,7 +247,9 @@ export default function CarDetailClient() {
                   </Badge>
                 </div>
                 <h1 className="text-3xl font-bold">{car.name}</h1>
-                <p className="text-gray-500 dark:text-gray-400 mt-1">{car.mileage} • {car.seats} Seats • {car.transmission}</p>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">
+                  {car.mileage} • {car.seats} Seats • {car.transmission}
+                </p>
               </div>
 
               <div className="flex items-center">
@@ -263,10 +316,77 @@ export default function CarDetailClient() {
               <Separator className="dark:border-gray-800" />
 
               <div className="space-y-3">
+                <h3 className="font-medium">Date Selection</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">From Date</label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal dark:border-gray-800"
+                        >
+                          {fromDate ? format(fromDate, "PPP") : "Select date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={fromDate}
+                          onSelect={(date) => {
+                            setFromDate(date)
+                            if (date && toDate && date >= toDate) {
+                              setToDate(addDays(date, 1))
+                            }
+                          }}
+                          initialFocus
+                          disabled={(date) => date < new Date()}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">To Date</label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal dark:border-gray-800"
+                        >
+                          {toDate ? format(toDate, "PPP") : "Select date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={toDate}
+                          onSelect={setToDate}
+                          initialFocus
+                          disabled={(date) => (fromDate ? date <= fromDate : date <= new Date())}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-lg p-4 flex items-start">
+                  <Info className="h-5 w-5 text-blue-600 dark:text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <p className="text-blue-700 dark:text-blue-400 text-sm">
+                    <span className="font-medium">
+                      Duration: {numberOfDays} day{numberOfDays !== 1 ? "s" : ""}
+                    </span>
+                    <br />
+                    Price is calculated per day and multiplied by the number of days.
+                  </p>
+                </div>
+
+                <Separator className="dark:border-gray-800" />
+
                 <h3 className="font-medium">Price Breakdown</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-500 dark:text-gray-400">Base price</span>
+                    <span className="text-gray-500 dark:text-gray-400">Base price (per day)</span>
                     <span>₹{basePrice}</span>
                   </div>
                   {additionalFees > 0 && (
@@ -275,6 +395,10 @@ export default function CarDetailClient() {
                       <span>₹{additionalFees}</span>
                     </div>
                   )}
+                  <div className="flex justify-between">
+                    <span className="text-gray-500 dark:text-gray-400">Number of days</span>
+                    <span>× {numberOfDays}</span>
+                  </div>
                   <Separator className="dark:border-gray-800" />
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
@@ -283,9 +407,78 @@ export default function CarDetailClient() {
                 </div>
               </div>
 
-              <Button size="lg" className="w-full">
-                Book Now
-              </Button>
+              <Dialog open={bookingOpen} onOpenChange={setBookingOpen}>
+                <DialogTrigger asChild>
+                  <Button size="lg" className="w-full">
+                    Book Now
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Complete Your Booking</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="name">Full Name</Label>
+                      <Input
+                        id="name"
+                        name="name"
+                        value={bookingForm.name}
+                        onChange={handleBookingInput}
+                        placeholder="John Doe"
+                        required
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={bookingForm.email}
+                        onChange={handleBookingInput}
+                        placeholder="john@example.com"
+                        required
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        value={bookingForm.phone}
+                        onChange={handleBookingInput}
+                        placeholder="+91 9876543210"
+                        required
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="dob">Date of Birth</Label>
+                      <Input
+                        id="dob"
+                        name="dob"
+                        type="date"
+                        value={bookingForm.dob}
+                        onChange={handleBookingInput}
+                        required
+                      />
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-md mt-2">
+                      <p className="text-sm text-white font-medium">Booking Summary</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {car?.name} • {numberOfDays} day{numberOfDays !== 1 ? "s" : ""} • ₹{totalPrice}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {fromDate && format(fromDate, "PPP")} to {toDate && format(toDate, "PPP")}
+                      </p>
+                    </div>
+                  </div>
+                  <Button onClick={handleBookingSubmit} className="w-full">
+                    Proceed to Payment
+                  </Button>
+                </DialogContent>
+              </Dialog>
 
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 <p>* Fuel policy: Return with same fuel level</p>
